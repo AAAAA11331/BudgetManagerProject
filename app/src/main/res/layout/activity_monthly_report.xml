@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootMonthlyReport"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+    <Spinner
+        android:id="@+id/spinnerMonth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/spinnerMonth"
+        android:layout_above="@id/tvNet"
+        android:paddingTop="16dp">
+        <TableLayout
+            android:id="@+id/tableLayoutReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2">
+        </TableLayout>
+    </ScrollView>
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No transactions for this month."
+        android:textSize="16sp"
+        android:textColor="#757575"
+        android:visibility="gone" />
+    <TextView
+        android:id="@+id/tvNet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Net for [Month]: $0.00"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        android:layout_above="@id/btnExport"
+        android:layout_marginBottom="16dp" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnExport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_navigation"
+        android:layout_marginBottom="16dp"
+        android:text="Export Report"/>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/bottom_nav_menu" />
+</RelativeLayout>
