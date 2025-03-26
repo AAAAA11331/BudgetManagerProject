@@ -60,7 +60,6 @@ public class MainDashboardActivity extends BaseActivity implements TransactionAd
         super.onResume();
         updateDashboard();
     }
-
     private void updateDashboard() {
         List<Transaction> recentTx = loadRecentTransactions();
         recentAdapter.updateTransactions(recentTx);

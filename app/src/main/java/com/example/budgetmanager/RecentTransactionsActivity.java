@@ -44,7 +44,6 @@ public class RecentTransactionsActivity extends BaseActivity implements Transact
         recyclerViewTransactions = findViewById(R.id.recyclerView_transactions);
         tvEmptyState = findViewById(R.id.tvEmptyState);
 
-
         Button btnThisMonth = findViewById(R.id.btnThisMonth);
         if (btnThisMonth != null) {
             btnThisMonth.setOnClickListener(v -> {

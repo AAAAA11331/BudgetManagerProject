@@ -263,7 +263,6 @@ public class AddTransactionActivity extends BaseActivity {
                 editAmount.setError("Amount must be greater than 0");
                 return;
             }
-
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("type", type);
