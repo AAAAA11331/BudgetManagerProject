@@ -19,7 +19,6 @@ public class MainDashboardActivity extends BaseActivity implements TransactionAd
     private RecyclerView rvRecentTransactions;
     private DatabaseHelper dbHelper;
     private TransactionAdapter recentAdapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
