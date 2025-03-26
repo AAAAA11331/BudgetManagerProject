@@ -26,7 +26,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void setupBottomNavigation() {
         bottomNav = findViewById(R.id.bottom_navigation);
         if (bottomNav == null) {
-            Log.e(TAG, "BottomNavigationView not found in layout, skipping setup");
             return; // Exit early if navigation view is missing
         }
 
@@ -34,8 +33,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == getSelectedItemId()) {
-                Log.d(TAG, "Already on " + getActivityClass().getSimpleName() + ", no navigation needed");
-                Toast.makeText(this, "Already on this page", Toast.LENGTH_SHORT).show(); // User feedback
                 return true;
             }
 
@@ -55,7 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 intent = new Intent(this, targetActivity);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                Log.d(TAG, "Navigating to " + targetActivity.getSimpleName());
                 if (!getActivityClass().equals(targetActivity)) {
                     finish();
                 }

@@ -24,7 +24,7 @@ public class AddTransactionActivity extends BaseActivity {
     private static final String TAG = "AddTransactionActivity";
     private Spinner spinnerType, spinnerCategory, spinnerFrequency, spinnerFrequencyUnit;
     private TextInputEditText editAmount, editDate, editNote, editFrequencyValue;
-    private MaterialButton btnSubmit;
+    private MaterialButton btnSubmit, btnHome;
     private TextInputLayout frequencyValueLayout;
     private DatabaseHelper dbHelper;
     private ArrayAdapter<String> typeAdapter, categoryAdapter, frequencyAdapter, frequencyUnitAdapter;
@@ -34,7 +34,6 @@ public class AddTransactionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_transaction);
-        Log.d(TAG, "onCreate called");
 
         dbHelper = new DatabaseHelper(this);
         spinnerType = findViewById(R.id.spinnerType);
@@ -47,10 +46,11 @@ public class AddTransactionActivity extends BaseActivity {
         editFrequencyValue = findViewById(R.id.editFrequencyValue);
         frequencyValueLayout = findViewById(R.id.frequencyValueLayout);
         btnSubmit = findViewById(R.id.btnSubmit);
-
-        Log.d(TAG, "Views initialized: spinnerType=" + (spinnerType != null) +
-                ", editAmount=" + (editAmount != null) +
-                ", btnSubmit=" + (btnSubmit != null));
+        btnHome = findViewById(R.id.btnHome);
+        btnHome.setOnClickListener(v -> {
+            startActivity(new Intent(this, MainDashboardActivity.class));
+            finish();
+        });
 
         typeAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, new String[]{"Select a Type", "Expense", "Income"});

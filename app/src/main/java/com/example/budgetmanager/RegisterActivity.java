@@ -26,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(v -> attemptRegister());
     }
 
+    // Attempt to register a new user
     private void attemptRegister() {
         String username = etNewUsername.getText().toString().trim();
         String password = etNewPassword.getText().toString().trim();
@@ -41,7 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        if (dbHelper.registerUser(username, SecurityUtils.hashPassword(password))) { // use hashed password
+        if (dbHelper.registerUser(username, password)) { // Pass plain password
             Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));
             finish();

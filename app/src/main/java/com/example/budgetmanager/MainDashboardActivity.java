@@ -32,7 +32,7 @@ public class MainDashboardActivity extends BaseActivity implements TransactionAd
         rvRecentTransactions = findViewById(R.id.rvRecentTransactions);
 
         String username = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("username", "User");
-        tvGreeting.setText("欢迎回来，" + username + "!");
+        tvGreeting.setText("Welcome Back，" + username + "!");
 
         rvRecentTransactions.setLayoutManager(new LinearLayoutManager(this));
         recentAdapter = new TransactionAdapter(new ArrayList<>(), this);
@@ -74,7 +74,7 @@ public class MainDashboardActivity extends BaseActivity implements TransactionAd
         }
 
         double balance = calculateCurrentBalance();
-        tvBalance.setText(String.format("当前余额: $%.2f", balance));
+        tvBalance.setText(String.format("Current Balance: $%.2f", balance));
         tvBalance.setTextColor(balance >= 0 ? Color.parseColor("#2E7D32") : Color.parseColor("#C62828"));
     }
 

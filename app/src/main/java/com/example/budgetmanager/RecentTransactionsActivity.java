@@ -35,7 +35,6 @@ public class RecentTransactionsActivity extends BaseActivity implements Transact
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recent_transactions);
-        Log.d(TAG, "onCreate called");
 
         buttonApplyFilters = findViewById(R.id.button_applyFilters);
         editTextNameFilter = findViewById(R.id.editText_nameFilter);
@@ -45,9 +44,6 @@ public class RecentTransactionsActivity extends BaseActivity implements Transact
         recyclerViewTransactions = findViewById(R.id.recyclerView_transactions);
         tvEmptyState = findViewById(R.id.tvEmptyState);
 
-        Log.d(TAG, "Views initialized: buttonApplyFilters=" + (buttonApplyFilters != null) +
-                ", editTextNameFilter=" + (editTextNameFilter != null) +
-                ", tvEmptyState=" + (tvEmptyState != null));
 
         Button btnThisMonth = findViewById(R.id.btnThisMonth);
         if (btnThisMonth != null) {
@@ -172,7 +168,6 @@ public class RecentTransactionsActivity extends BaseActivity implements Transact
         } finally {
             db.close();
         }
-        Log.d(TAG, "Total transactions: " + transactions.size());
         return transactions;
     }
 

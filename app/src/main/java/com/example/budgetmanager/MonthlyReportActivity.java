@@ -138,7 +138,6 @@ public class MonthlyReportActivity extends BaseActivity {
                     rowCount++;
                 }
             }
-            Log.d(TAG, "Rows added: " + rowCount);
             if (rowCount == 0) {
                 tableLayout.setVisibility(View.GONE);
                 tvEmptyState.setVisibility(View.VISIBLE);
@@ -152,7 +151,6 @@ public class MonthlyReportActivity extends BaseActivity {
 
         double net = totalIncome - totalExpense;
         tvNet.setText(String.format("Net for %s: $%.2f", yearMonth, net));
-        Log.d(TAG, "Net: " + net);
     }
 
     private TextView createTextView(String text) {

@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.widget.Toast;
 import java.io.FileWriter;
 import java.io.IOException;
+import androidx.core.content.ContextCompat;
+import android.content.pm.PackageManager;
+import android.Manifest;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "budget_app.db";
@@ -48,37 +51,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Incremental upgrades for schema changes
-        if (oldVersion < 2) {
-            db.execSQL("ALTER TABLE transactions ADD COLUMN frequency TEXT DEFAULT 'One-time'");
-            db.execSQL("ALTER TABLE transactions ADD COLUMN frequency_value TEXT");
-        }
-        if (oldVersion < 3) {
-            db.execSQL("ALTER TABLE transactions ADD COLUMN amount REAL NOT NULL DEFAULT 0");
-        }
-        if (oldVersion < 4) {
-            db.execSQL("ALTER TABLE transactions ADD COLUMN frequency_unit TEXT");
-        }
-        if (oldVersion < 5) {
-            db.execSQL("CREATE TABLE users (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "username TEXT UNIQUE NOT NULL, " +
-                    "password TEXT NOT NULL)");
-        }
+        // Drop and recreate tables if version is less than current
         if (oldVersion < 6) {
-            db.execSQL("CREATE TABLE notifications (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "username TEXT UNIQUE NOT NULL, " +
-                    "monthly_report INTEGER DEFAULT 0, " +
-                    "budget_warning INTEGER DEFAULT 0, " +
-                    "FOREIGN KEY(username) REFERENCES users(username))");
+            db.execSQL("DROP TABLE IF EXISTS transactions");
+            db.execSQL("DROP TABLE IF EXISTS users");
+            db.execSQL("DROP TABLE IF EXISTS notifications");
+            onCreate(db);
         }
     }
 
-    /**
-     * Register a new user and set default notifications.
-     * Returns false if username already exists.
-     */
+    // Register a new user and set default notifications
     public boolean registerUser(String username, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -87,17 +69,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             cursor.close();
             db.close();
-            return false; // Username exists, registration fails
+            return false; // Username exists
         }
         cursor.close();
 
-        // Insert new user
+        // Insert new user with hashed password
         ContentValues values = new ContentValues();
         values.put("username", username);
-        values.put("password", SecurityUtils.hashPassword(password));
+        values.put("password", SecurityUtils.hashPassword(password)); // Hash password here
         long result = db.insert("users", null, values);
 
-        // If user is successfully added, set default notifications
+        // Set default notifications if user is added
         if (result != -1) {
             ContentValues notificationValues = new ContentValues();
             notificationValues.put("username", username);
@@ -106,29 +88,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.insert("notifications", null, notificationValues);
         }
         db.close();
-        return result != -1; // Return true if insertion succeeds
+        return result != -1;
     }
 
-    /**
-     * Authenticate a user by comparing hashed password.
-     */
+    // Authenticate user by comparing hashed password
     public boolean authenticateUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT password FROM users WHERE username = ?",
-                new String[]{username});
-        boolean isAuthenticated = false;
-        if (cursor.moveToFirst()) {
-            String storedHash = cursor.getString(0);
-            isAuthenticated = SecurityUtils.hashPassword(password).equals(storedHash);
+        try (Cursor cursor = db.rawQuery("SELECT password FROM users WHERE username = ?", new String[]{username})) {
+            if (cursor.moveToFirst()) {
+                String storedHash = cursor.getString(0);
+                return storedHash != null && SecurityUtils.hashPassword(password).equals(storedHash);
+            }
+            return false;
+        } catch (Exception e) {
+            android.util.Log.e("DatabaseHelper", "Error authenticating user: " + e.getMessage());
+            return false;
+        } finally {
+            db.close();
         }
-        cursor.close();
-        db.close();
-        return isAuthenticated;
     }
 
-    /**
-     * Get notification preference for a user (monthly_report or budget_warning).
-     */
+    // Get notification preference for a user
     public boolean getNotificationPreference(String username, String type) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT " + type + " FROM notifications WHERE username = ?",
@@ -142,9 +122,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return enabled;
     }
 
-    /**
-     * Update or insert notification preference for a user.
-     */
+    // Update or insert notification preference
     public void updateNotificationPreference(String username, String type, boolean isEnabled) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -157,10 +135,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    /**
-     * Export transactions table to a CSV file.
-     */
+    // Export transactions table to CSV file
     public void exportDatabaseToCSV(Context context, String filePath) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(context, "Storage permission required", Toast.LENGTH_SHORT).show();
+            return;
+        }
         SQLiteDatabase db = this.getReadableDatabase();
         try (Cursor cursor = db.rawQuery("SELECT * FROM transactions", null);
              FileWriter writer = new FileWriter(filePath)) {
